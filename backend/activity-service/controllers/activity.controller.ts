@@ -40,7 +40,7 @@ export const activityController = {
             },
           ],
         });
-        logger.info(`Published ${KAFKA_EVENT_TYPES.ACTIVITY_CREATED} event to Kafka`);
+        logger.info(`Published ${KAFKA_EVENT_TYPES.ACTIVITY_CREATED} event to Kafka`, { activityId: activity.id, event: KAFKA_EVENT_TYPES.ACTIVITY_CREATED });
       } catch (error) {
         logger.error('Failed to publish event to Kafka', { error });
       }

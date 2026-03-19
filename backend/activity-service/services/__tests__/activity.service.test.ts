@@ -1,7 +1,7 @@
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
 import { prisma } from '../../database/prisma';
 import { activityService } from '../activity.service';
-import { PrismaClient } from '../../../node_modules/@prisma/client/activity';
+import { PrismaClient } from '@prisma/client/activity/index.js';
 
 // Mock the prisma client
 jest.mock('../../database/prisma', () => ({
@@ -9,7 +9,14 @@ jest.mock('../../database/prisma', () => ({
   prisma: mockDeep<PrismaClient>(),
 }));
 
-const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
+// Mock the cache utility to prevent open Redis handles
+jest.mock('../../../lib/cache', () => ({
+  deleteCache: jest.fn().mockResolvedValue(undefined),
+  getCache: jest.fn().mockResolvedValue(null),
+  setCache: jest.fn().mockResolvedValue(undefined),
+}));
+
+const prismaMock = prisma as any;
 
 describe('activityService', () => {
   beforeEach(() => {
@@ -33,7 +40,7 @@ describe('activityService', () => {
         createdAt: new Date(),
       };
 
-      prismaMock.activity.create.mockResolvedValue(mockActivity);
+      (prismaMock.activity.create as any).mockResolvedValue(mockActivity);
 
       const result = await activityService.logActivity(leadId, input);
 

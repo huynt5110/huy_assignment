@@ -111,29 +111,14 @@ CREATE INDEX idx_activities_type          ON activities (type);
 
 ## 3. Kafka Event JSON Formats
 
-All events are published as JSON with a consistent **envelope structure**:
+All events are published as JSON with a simplified **type/data structure**:
 
-### 3.1 Event Envelope (Common Structure)
-
-```json
-{
-  "eventId": "evt-550e8400-e29b-41d4-a716-446655440000",
-  "eventType": "lead.created",
-  "timestamp": "2026-03-17T08:15:30.123Z",
-  "correlationId": "req-abc123-def456",
-  "source": "lead-service",
-  "payload": { ... }
-}
-```
+### 3.1 Event Structure
 
 | Field | Type | Description |
 |---|---|---|
-| `eventId` | string (UUID) | Unique event identifier for idempotency |
-| `eventType` | string | Event name (see below) |
-| `timestamp` | string (ISO 8601) | When the event was produced |
-| `correlationId` | string | Request correlation ID for tracing |
-| `source` | string | Service that produced the event |
-| `payload` | object | Event-specific data |
+| `type` | string | Event name (e.g. `lead.created`) |
+| `data` | object | Event-specific data payload |
 
 ---
 
@@ -141,16 +126,12 @@ All events are published as JSON with a consistent **envelope structure**:
 
 #### `lead.created`
 
-Published when a new lead is submitted from the website.
+Published when a new lead is submitted.
 
 ```json
 {
-  "eventId": "evt-550e8400-e29b-41d4-a716-446655440000",
-  "eventType": "lead.created",
-  "timestamp": "2026-03-17T08:15:30.123Z",
-  "correlationId": "req-abc123-def456",
-  "source": "lead-service",
-  "payload": {
+  "type": "lead.created",
+  "data": {
     "id": "lead-001",
     "fullName": "John Doe",
     "email": "john.doe@example.com",
@@ -158,28 +139,6 @@ Published when a new lead is submitted from the website.
     "source": "website",
     "status": "new",
     "createdAt": "2026-03-17T08:15:30.123Z"
-  }
-}
-```
-
-#### `lead.updated`
-
-Published when a lead's information or status is updated.
-
-```json
-{
-  "eventId": "evt-660e9500-f30c-52e5-b827-557766550001",
-  "eventType": "lead.updated",
-  "timestamp": "2026-03-17T09:30:00.000Z",
-  "correlationId": "req-def789-ghi012",
-  "source": "lead-service",
-  "payload": {
-    "id": "lead-001",
-    "changes": {
-      "status": { "from": "new", "to": "contacted" },
-      "notes": { "from": null, "to": "Customer interested in SUV models" }
-    },
-    "updatedAt": "2026-03-17T09:30:00.000Z"
   }
 }
 ```
@@ -194,20 +153,13 @@ Published when a salesperson logs a new follow-up activity.
 
 ```json
 {
-  "eventId": "evt-770f0600-a41d-63f6-c938-668877660002",
-  "eventType": "activity.created",
-  "timestamp": "2026-03-17T10:00:00.000Z",
-  "correlationId": "req-ghi345-jkl678",
-  "source": "activity-service",
-  "payload": {
+  "type": "activity.created",
+  "data": {
     "id": "act-001",
     "leadId": "lead-001",
     "type": "phone_call",
     "description": "Called customer — left voicemail about new SUV arrivals",
-    "performedBy": {
-      "id": "user-001",
-      "fullName": "Jane Smith"
-    },
+    "performedBy": "user-001",
     "performedAt": "2026-03-17T10:00:00.000Z"
   }
 }
