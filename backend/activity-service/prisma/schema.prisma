@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client/activity"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  fullName  String     @map("full_name")
+  email     String     @unique
+  role      String     @default("salesperson")
+  isActive  Boolean    @default(true) @map("is_active")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  activities Activity[]
+
+  @@map("users")
+  @@index([email])
+  @@index([isActive])
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  leadId      String   @map("lead_id")
+  type        String
+  description String
+  performedBy String   @map("performed_by")
+  performedAt DateTime @default(now()) @map("performed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation(fields: [performedBy], references: [id])
+
+  @@map("activities")
+  @@index([leadId])
+  @@index([leadId, performedAt(sort: Desc)])
+  @@index([performedBy])
+  @@index([type])
+}
