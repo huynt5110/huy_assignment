@@ -21,6 +21,7 @@ async function main() {
       },
     });
   }
+  console.log('User 1 was created with Id', user1.id);
 
   let user2 = await activityPrisma.user.findFirst({
     where: { email: 'mike.jones@dealership.com' },
@@ -34,6 +35,7 @@ async function main() {
       },
     });
   }
+  console.log('User 2 was created with Id', user2.id);
 
   // 2. Seed Leads DB
   console.log('Seeding Lead Database (Leads)...');

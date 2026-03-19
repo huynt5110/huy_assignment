@@ -92,6 +92,53 @@ Verifies full flows through the API Gateway using the real infrastructure.
 npm run test:e2e
 ```
 
+## Create Lead
+```bash
+curl --location 'localhost:3000/api/leads' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM=' \
+--data-raw '{
+    "fullName": "Huy Nguyen",
+    "email": "huy.nt5110@gmail.com"
+}'
+```
+
+## Create Lead Activity
+```bash
+curl --location 'localhost:3000/api/leads/7085f345-b695-44b1-b5d3-a0675ce068ad/activities' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM=' \
+--data '{
+    "type": "phone_call",
+    "description": "Called customer for initial follow-up",
+    "performedBy": "2b9afa13-384d-46a9-ae4f-a28d504062b1"
+}'
+```
+
+## Get Lead Activity
+```bash
+curl --location 'localhost:3000/api/leads/:id/activities' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM='
+```
+
+## Get Lead Activity With Cursor
+```bash
+curl --location 'localhost:3000/api/leads/:id/activities?cursor=:cursor&limit=10' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM='
+```
+
+## Get Lead
+```bash
+curl --location 'localhost:3000/api/leads?limit=10' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM='
+```
+
+## Get Lead With Cursor
+```bash
+curl --location 'localhost:3000/api/leads?cursor=:cursor&limit=10' \
+--header 'Authorization: Bearer dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM='
+```
+
 ## 🧠 AI Collaboration Narrative
 
 ### High-Level Strategy
