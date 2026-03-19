@@ -1,6 +1,8 @@
 import { prisma } from '../database/prisma';
 import { CreateLeadInput } from '../schemas/lead.schema';
 import { encodeCursor, decodeCursor } from '../../lib/crypto';
+import { CACHE_KEYS } from '../../lib/constants';
+import { deleteCachePattern } from '../../lib/cache';
 
 export const leadService = {
   async getAllLeads(limit: number, cursor?: string) {
@@ -33,8 +35,13 @@ export const leadService = {
   },
 
   async createLead(data: CreateLeadInput) {
-    return await prisma.lead.create({
+    const lead = await prisma.lead.create({
       data,
     });
+
+    // Invalidate list cache
+    await deleteCachePattern(CACHE_KEYS.LEADS_LIST + '*');
+
+    return lead;
   },
 };

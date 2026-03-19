@@ -1,6 +1,8 @@
 import { prisma } from '../database/prisma';
 import { CreateActivityInput } from '../schemas/activity.schema';
 import { encodeCursor, decodeCursor } from '../../lib/crypto';
+import { CACHE_KEYS } from '../../lib/constants';
+import { deleteCache } from '../../lib/cache';
 
 export const activityService = {
   async getActivitiesByLeadId(leadId: string, limit: number, cursor?: string) {
@@ -26,11 +28,17 @@ export const activityService = {
   },
 
   async logActivity(leadId: string, data: CreateActivityInput) {
-    return await prisma.activity.create({
+    const activity = await prisma.activity.create({
       data: {
         ...data,
         leadId,
       },
     });
+
+    // Invalidate caches
+    await deleteCache(CACHE_KEYS.ACTIVITY_LIST(leadId));
+    await deleteCache(CACHE_KEYS.LEAD_ITEM(leadId));
+
+    return activity;
   },
 };
