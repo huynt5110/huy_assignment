@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import { testDbConnection } from './database/prisma';
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 import app from './app';
@@ -8,8 +9,12 @@ import { getProducer } from '../lib/kafka';
 
 const PORT = process.env.PORT || 3001;
 
-async function start() {
+async function startLeadService() {
   try {
+    // 0. Verify Database
+    await testDbConnection();
+
+    // 1. Initialize Kafka
     const producer = await getProducer();
     app.set('kafkaProducer', producer);
     logger.info('Kafka Producer initialized and stored in app context');
@@ -23,4 +28,4 @@ async function start() {
   }
 }
 
-start();
+startLeadService();

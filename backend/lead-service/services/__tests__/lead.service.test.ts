@@ -1,7 +1,7 @@
 import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
 import { prisma } from '../../database/prisma';
 import { leadService } from '../lead.service';
-import { PrismaClient } from '../../../node_modules/@prisma/client/lead';
+import { PrismaClient } from '@prisma/client/lead';
 
 // Mock the prisma client
 jest.mock('../../database/prisma', () => ({
@@ -9,7 +9,15 @@ jest.mock('../../database/prisma', () => ({
   prisma: mockDeep<PrismaClient>(),
 }));
 
-const prismaMock = prisma as unknown as DeepMockProxy<PrismaClient>;
+// Mock the cache utility to prevent open Redis handles
+jest.mock('../../../lib/cache', () => ({
+  deleteCachePattern: jest.fn().mockResolvedValue(undefined),
+  getCache: jest.fn().mockResolvedValue(null),
+  setCache: jest.fn().mockResolvedValue(undefined),
+  deleteCache: jest.fn().mockResolvedValue(undefined),
+}));
+
+const prismaMock = prisma as any;
 
 describe('leadService', () => {
   beforeEach(() => {
@@ -30,7 +38,7 @@ describe('leadService', () => {
         updatedAt: new Date(),
       };
 
-      prismaMock.lead.findUnique.mockResolvedValue(mockLead);
+      (prismaMock.lead.findUnique as any).mockResolvedValue(mockLead);
 
       const result = await leadService.getLeadById('1');
 
@@ -41,7 +49,7 @@ describe('leadService', () => {
     });
 
     it('should return null if the lead does not exist', async () => {
-      prismaMock.lead.findUnique.mockResolvedValue(null);
+      (prismaMock.lead.findUnique as any).mockResolvedValue(null);
 
       const result = await leadService.getLeadById('non-existent');
 
@@ -68,7 +76,7 @@ describe('leadService', () => {
         updatedAt: new Date(),
       };
 
-      prismaMock.lead.create.mockResolvedValue(mockLead);
+      (prismaMock.lead.create as any).mockResolvedValue(mockLead);
 
       const result = await leadService.createLead(input);
 

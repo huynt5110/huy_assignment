@@ -1,4 +1,10 @@
-# Sales Lead Management Tool — High-Level Design
+# High-Level Design: Sales Lead Management System
+
+> [!NOTE]
+> For setup and configuration details, please refer to the [README.md](README.md).
+
+## Configuration Management
+The system utilizes a centralized environment configuration strategy. All microservices and infrastructure components share a lead `.env` file located in the `backend/` directory. This ensures consistency across the distributed stack and simplifies orchestration during both local development and containerized execution.
 
 > A lightweight microservices-based tool for salespeople to manage and track incoming leads from a dealership website.
 
