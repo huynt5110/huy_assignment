@@ -1,5 +1,5 @@
 import { PrismaClient as LeadClient } from '@prisma/client/lead/index.js';
-import { PrismaClient as ActivityClient } from '@prisma/client/activity';
+import { PrismaClient as ActivityClient } from '@prisma/client/activity/index.js';
 
 const leadPrisma = new LeadClient();
 const activityPrisma = new ActivityClient();
