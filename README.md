@@ -1,5 +1,5 @@
 # Video link
-- ## update soon
+- ## Link: [part1](https://www.loom.com/share/1e27d2b316f64add89d84d15d54495ff) &&  [part2](https://www.loom.com/share/62f76f2d37cb41b8a592d4a0090bcc59)
 
 > [!NOTE]
 > For design architecture, please refer to the [HIGH_LEVEL_DESIGN.md](HIGH_LEVEL_DESIGN.md).
