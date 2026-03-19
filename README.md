@@ -1,5 +1,8 @@
+# Video link
+- ## update soon
+
 > [!NOTE]
-> For setup and design architecture, please refer to the [HIGH_LEVEL_DESIGN.md](HIGH_LEVEL_DESIGN.md).
+> For design architecture, please refer to the [HIGH_LEVEL_DESIGN.md](HIGH_LEVEL_DESIGN.md).
 
 ## What can be improved
 -  As a simple project, so I decided to use simple token for authentication, but in production, we should use JWT for authentication.
@@ -21,7 +24,7 @@ ACTIVITIES_DB_NAME=activities_db
 
 # --- Service Communication ---
 # Secure random string for bearer authentication
-AUTH_TOKEN=your_secure_auth_token
+AUTH_TOKEN=dbCmuy7//+2vFXalDlf7kHcRhTecCbnMYKRVRkVbRbnZZ/7CFto6nDkUCKk6rF00nHM=
 KAFKAJS_NO_PARTITIONER_WARNING=1
 
 # --- Ports ---
