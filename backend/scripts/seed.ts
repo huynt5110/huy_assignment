@@ -1,5 +1,5 @@
-import { PrismaClient as LeadClient } from '../backend/lead-service/node_modules/@prisma/client/lead';
-import { PrismaClient as ActivityClient } from '../backend/activity-service/node_modules/@prisma/client/activity';
+import { PrismaClient as LeadClient } from '@prisma/client/lead/index.js';
+import { PrismaClient as ActivityClient } from '@prisma/client/activity';
 
 const leadPrisma = new LeadClient();
 const activityPrisma = new ActivityClient();
@@ -31,8 +31,10 @@ async function main() {
 
   // 2. Seed Leads DB
   console.log('Seeding Lead Database (Leads)...');
-  const lead1 = await leadPrisma.lead.create({
-    data: {
+  const lead1 = await leadPrisma.lead.upsert({
+    where: { email: 'john.doe@example.com' },
+    update: {},
+    create: {
       fullName: 'John Doe',
       email: 'john.doe@example.com',
       phone: '+1-555-1234',
@@ -42,8 +44,10 @@ async function main() {
     },
   });
 
-  const lead2 = await leadPrisma.lead.create({
-    data: {
+  const lead2 = await leadPrisma.lead.upsert({
+    where: { email: 'alice.b@example.com' },
+    update: {},
+    create: {
       fullName: 'Alice Brown',
       email: 'alice.b@example.com',
       phone: '+1-555-5678',
@@ -55,23 +59,34 @@ async function main() {
 
   // 3. Seed Activities (linking to Leads and Users)
   console.log('Seeding Activity Database (Activities)...');
-  await activityPrisma.activity.create({
-    data: {
+  const activities = [
+    {
       leadId: lead1.id,
       type: 'phone_call',
       description: 'First introductory call — no answer.',
       performedBy: user1.id,
     },
-  });
-
-  await activityPrisma.activity.create({
-    data: {
+    {
       leadId: lead2.id,
       type: 'email',
       description: 'Sent follow-up email about referral bonus.',
       performedBy: user2.id,
     },
-  });
+  ];
+
+  for (const activityData of activities) {
+    const existing = await activityPrisma.activity.findFirst({
+      where: {
+        leadId: activityData.leadId,
+        type: activityData.type,
+        description: activityData.description,
+      },
+    });
+
+    if (!existing) {
+      await activityPrisma.activity.create({ data: activityData });
+    }
+  }
 
   console.log('--- Seeding Completed Successfully ---');
 }

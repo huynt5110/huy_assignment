@@ -1,0 +1,28 @@
+{
+  "name": "sales-lead-management",
+  "version": "1.0.0",
+  "description": "Sales Lead Management Tool",
+  "scripts": {
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:generate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma generate && cd ../activity-service && npx prisma generate'",
+    "db:migrate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma migrate dev && cd ../activity-service && npx prisma migrate dev'",
+    "db:seed": "tsx --env-file=.env scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.27",
+    "dotenv-cli": "^7.4.2",
+    "prisma": "^5.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "tsx": "^4.21.0",
+    "ioredis": "^5.3.2",
+    "winston": "^3.12.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "zod": "^3.22.4"
+  }
+}
