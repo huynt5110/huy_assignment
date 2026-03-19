@@ -4,6 +4,7 @@ import { LeadListResponse } from '../schemas/lead.schema';
 import { getCache, setCache } from '../../lib/cache';
 import { logger } from '../../lib/logger';
 import { asyncHandler } from '../../middleware/utils';
+import { KAFKA_TOPICS, KAFKA_EVENT_TYPES } from '../../lib/constants';
 
 export const leadController = {
   listLeads: asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -41,6 +42,28 @@ export const leadController = {
 
   createLead: asyncHandler(async (req: Request, res: Response) => {
     const lead = await leadService.createLead(req.body);
+
+    // Publish to Kafka
+    const producer = req.app.get('kafkaProducer');
+    if (producer) {
+      try {
+        await producer.send({
+          topic: KAFKA_TOPICS.LEAD_EVENTS,
+          messages: [
+            {
+              value: JSON.stringify({
+                type: KAFKA_EVENT_TYPES.LEAD_CREATED,
+                data: lead,
+              }),
+            },
+          ],
+        });
+        logger.info(`Published ${KAFKA_EVENT_TYPES.LEAD_CREATED} event to Kafka`);
+      } catch (error) {
+        logger.error('Failed to publish event to Kafka', { error });
+      }
+    }
+
     res.status(201).json(lead);
   }),
 };
