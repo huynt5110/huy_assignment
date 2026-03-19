@@ -10,7 +10,10 @@ import { initSocket, broadcast, emitToRoom } from '../lib/socket';
 import { createConsumer } from '../lib/kafka';
 import { logger } from '../lib/logger';
 
-import { KAFKA_TOPICS, KAFKA_EVENT_TYPES } from '../lib/constants';
+// Set service metadata for logs
+logger.defaultMeta = { service: 'notification-service' };
+
+import { KAFKA_TOPICS } from '../lib/constants';
 
 import { routeEvent } from './handlers';
 
@@ -38,14 +41,26 @@ async function startNotificationService() {
         try {
           const eventData = JSON.parse(payload);
           const { type, data } = eventData;
+
+          // Extract identifiers for tracing
+          const leadId = data.leadId || data.id || 'no-lead';
           const correlationId = message.headers?.correlationId?.toString();
 
-          logger.info(`Processing Kafka message`, { topic, type, correlationId });
+          logger.info(`Processing Kafka event and routing to handlers`, {
+            topic,
+            type,
+            leadId,
+            correlationId
+          });
 
           // Delegate to specialized handlers
           await routeEvent(topic, type, data);
         } catch (error) {
-          logger.error('Error processing Kafka message', { topic, error });
+          logger.error('Critical failure in Kafka message processing', {
+            topic,
+            partition,
+            error
+          });
         }
       },
     });

@@ -1,4 +1,4 @@
-import { Kafka, Producer, Consumer, KafkaConfig } from 'kafkajs';
+import { Kafka, Producer, Consumer, KafkaConfig, Partitioners } from 'kafkajs';
 import { logger } from './logger';
 
 const kafkaConfig: KafkaConfig = {
@@ -16,7 +16,9 @@ let producer: Producer | null = null;
 
 export const getProducer = async (): Promise<Producer> => {
   if (!producer) {
-    producer = kafka.producer();
+    producer = kafka.producer({
+      createPartitioner: Partitioners.LegacyPartitioner,
+    });
     await producer.connect();
     logger.info('Kafka Producer connected');
   }

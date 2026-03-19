@@ -58,7 +58,7 @@ export const leadController = {
             },
           ],
         });
-        logger.info(`Published ${KAFKA_EVENT_TYPES.LEAD_CREATED} event to Kafka`);
+        logger.info(`Published ${KAFKA_EVENT_TYPES.LEAD_CREATED} event to Kafka`, { leadId: lead.id, event: KAFKA_EVENT_TYPES.LEAD_CREATED });
       } catch (error) {
         logger.error('Failed to publish event to Kafka', { error });
       }

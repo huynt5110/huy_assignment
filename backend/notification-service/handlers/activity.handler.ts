@@ -11,7 +11,7 @@ export const handleActivityEvent = async (type: string, data: any) => {
       }
       // Also broadcast globally
       broadcast(KAFKA_EVENT_TYPES.ACTIVITY_CREATED, data);
-      logger.info(`Broadcasted ${type} via WebSocket`);
+      logger.info(`Broadcasted ${data.id} ${type} via WebSocket`);
       break;
     default:
       logger.warn(`Unhandled activity event type: ${type}`);
