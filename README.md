@@ -104,6 +104,8 @@ curl --location 'localhost:3000/api/leads' \
 ```
 
 ## Create Lead Activity
+performedBy: {{ userId }}
+userId was logged when run `npm run db:prepare`
 ```bash
 curl --location 'localhost:3000/api/leads/7085f345-b695-44b1-b5d3-a0675ce068ad/activities' \
 --header 'Content-Type: application/json' \
