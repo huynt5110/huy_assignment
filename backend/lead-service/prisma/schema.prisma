@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../../node_modules/@prisma/client/lead"
+  output   = "../node_modules/@prisma/client/lead"
 }
 
 datasource db {
@@ -11,7 +11,7 @@ datasource db {
 model Lead {
   id        String   @id @default(uuid())
   fullName  String   @map("full_name")
-  email     String   @unique
+  email     String
   phone     String?
   source    String   @default("website")
   status    String   @default("new")

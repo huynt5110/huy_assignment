@@ -132,8 +132,9 @@ The API Gateway is the single entry point for all client-facing REST traffic. It
 | **Request Routing** | Maps public endpoints to internal microservice URLs via a route table. |
 | **Rate Limiting** | `express-rate-limit` middleware — limits requests per IP to prevent abuse (e.g., 100 req/min). |
 | **Security Headers** | `helmet` middleware — sets CSP, HSTS, X-Frame-Options, etc. |
-| **Redis Caching** | Caches GET responses in Redis with TTL. Invalidates cache on POST/PUT operations. |
-| **Request Validation** | Validates incoming payloads (JSON schema) before forwarding. |
+| **Rate Limiting** | `express-rate-limit` middleware — limits requests per IP (e.g., 100 req/min). |
+| **Redis Caching** | Caches selective GET responses (e.g., Lead Details) in Redis with TTL. |
+| **Request Validation** | Validates incoming payloads (JSON schema/Zod) before forwarding. |
 | **Logging** | Attaches `correlationId` to every request via middleware; logs request/response metadata with Winston. |
 | **CORS** | Configured to allow only the frontend origin. |
 
@@ -141,10 +142,9 @@ The API Gateway is the single entry point for all client-facing REST traffic. It
 
 | Method | Public Endpoint | Target Service | Description |
 |---|---|---|---|
-| `GET` | `/api/leads` | Lead Service | List all leads (paginated) |
+| `GET` | `/api/leads` | Lead Service | List all leads (cursor-based pagination) |
 | `GET` | `/api/leads/:id` | Lead Service | Get lead details |
 | `POST` | `/api/leads` | Lead Service | Create a new lead |
-| `PUT` | `/api/leads/:id` | Lead Service | Update lead info |
 | `POST` | `/api/leads/:id/activities` | Activity Service | Log a follow-up activity |
 | `GET` | `/api/leads/:id/activities` | Activity Service | Get activity log (paginated) |
 
