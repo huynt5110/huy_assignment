@@ -58,13 +58,7 @@ Install dependencies and prepare the databases:
 npm install
 
 # Generate Prisma clients for all services
-npm run db:generate
-
-# Run migrations for all services
-npm run db:migrate
-
-# Seed initial data
-npm run db:seed
+npm run db:prepare
 ```
 
 ### 4. Running the Application
