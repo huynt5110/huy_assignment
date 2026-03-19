@@ -9,6 +9,15 @@ export const leadService = {
     const decodedCursor = cursor ? decodeCursor(cursor) : undefined;
 
     const leads = await prisma.lead.findMany({
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        source: true,
+        status: true,
+        notes: true,
+      },
       take: limit + 1,
       skip: decodedCursor ? 1 : 0,
       cursor: decodedCursor ? { id: decodedCursor } : undefined,

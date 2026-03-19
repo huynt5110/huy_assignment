@@ -13,9 +13,6 @@ export interface ActivityResponse {
   leadId: string;
   type: string;
   description: string;
-  performedBy: string;
-  performedAt: Date;
-  createdAt: Date;
 }
 
 export interface ActivityListResponse {

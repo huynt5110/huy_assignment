@@ -18,8 +18,6 @@ export interface LeadResponse {
   source?: string;
   notes?: string | null;
   status: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface LeadListResponse {

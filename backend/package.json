@@ -8,10 +8,10 @@
     "db:generate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma generate && cd ../activity-service && npx prisma generate'",
     "db:migrate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma migrate dev && cd ../activity-service && npx prisma migrate dev'",
     "db:seed": "tsx --env-file=.env scripts/seed.ts",
-    "start:gateway": "tsx --env-file=.env api-gateway/index.ts",
-    "start:lead": "tsx --env-file=.env lead-service/index.ts",
-    "start:activity": "tsx --env-file=.env activity-service/index.ts",
-    "start:notification": "tsx --env-file=.env notification-service/index.ts",
+    "start:gateway": "cd api-gateway && npm install && tsx --env-file=../.env index.ts",
+    "start:lead": "cd lead-service && npm install && tsx --env-file=../.env index.ts",
+    "start:activity": "cd activity-service && npm install && tsx --env-file=../.env index.ts",
+    "start:notification": "cd notification-service && npm install && tsx --env-file=../.env index.ts",
     "test:e2e": "jest --config tests/jest.config.js"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-import { PrismaClient as LeadClient } from '@prisma/client/lead/index.js';
-import { PrismaClient as ActivityClient } from '@prisma/client/activity/index.js';
+import { PrismaClient as LeadClient } from '../lead-service/node_modules/@prisma/client/lead/index.js';
+import { PrismaClient as ActivityClient } from '../activity-service/node_modules/@prisma/client/activity/index.js';
 
 const leadPrisma = new LeadClient();
 const activityPrisma = new ActivityClient();
@@ -9,68 +9,80 @@ async function main() {
 
   // 1. Seed Activities DB (Users) first as they are needed for activities
   console.log('Seeding Activity Database (Users)...');
-  const user1 = await activityPrisma.user.upsert({
+  let user1 = await activityPrisma.user.findFirst({
     where: { email: 'jane.smith@dealership.com' },
-    update: {},
-    create: {
-      fullName: 'Jane Smith',
-      email: 'jane.smith@dealership.com',
-      role: 'salesperson',
-    },
   });
+  if (!user1) {
+    user1 = await activityPrisma.user.create({
+      data: {
+        fullName: 'Jane Smith',
+        email: 'jane.smith@dealership.com',
+        role: 'salesperson',
+      },
+    });
+  }
 
-  const user2 = await activityPrisma.user.upsert({
+  let user2 = await activityPrisma.user.findFirst({
     where: { email: 'mike.jones@dealership.com' },
-    update: {},
-    create: {
-      fullName: 'Mike Jones',
-      email: 'mike.jones@dealership.com',
-      role: 'salesperson',
-    },
   });
+  if (!user2) {
+    user2 = await activityPrisma.user.create({
+      data: {
+        fullName: 'Mike Jones',
+        email: 'mike.jones@dealership.com',
+        role: 'salesperson',
+      },
+    });
+  }
 
   // 2. Seed Leads DB
   console.log('Seeding Lead Database (Leads)...');
-  const lead1 = await leadPrisma.lead.upsert({
+  let lead1 = await leadPrisma.lead.findFirst({
     where: { email: 'john.doe@example.com' },
-    update: {},
-    create: {
-      fullName: 'John Doe',
-      email: 'john.doe@example.com',
-      phone: '+1-555-1234',
-      source: 'website',
-      status: 'new',
-      notes: 'Interested in the new SUV models.',
-    },
   });
+  if (!lead1) {
+    lead1 = await leadPrisma.lead.create({
+      data: {
+        fullName: 'John Doe',
+        email: 'john.doe@example.com',
+        phone: '+1-555-1234',
+        source: 'website',
+        status: 'new',
+        notes: 'Interested in the new SUV models.',
+      },
+    });
+  }
 
-  const lead2 = await leadPrisma.lead.upsert({
+  let lead2 = await leadPrisma.lead.findFirst({
     where: { email: 'alice.b@example.com' },
-    update: {},
-    create: {
-      fullName: 'Alice Brown',
-      email: 'alice.b@example.com',
-      phone: '+1-555-5678',
-      source: 'referral',
-      status: 'contacted',
-      notes: 'Referral from previous customer.',
-    },
   });
+  if (!lead2) {
+    lead2 = await leadPrisma.lead.create({
+      data: {
+        fullName: 'Alice Brown',
+        email: 'alice.b@example.com',
+        phone: '+1-555-5678',
+        source: 'referral',
+        status: 'contacted',
+        notes: 'Referral from previous customer.',
+      },
+    });
+  }
 
   // 3. Seed Activities (linking to Leads and Users)
   console.log('Seeding Activity Database (Activities)...');
   const activities = [
     {
-      leadId: lead1.id,
+      leadId: lead1!.id,
       type: 'phone_call',
       description: 'First introductory call — no answer.',
-      performedBy: user1.id,
+      performedBy: user1!.id,
     },
     {
-      leadId: lead2.id,
+      leadId: lead2!.id,
       type: 'email',
       description: 'Sent follow-up email about referral bonus.',
-      performedBy: user2.id,
+      performedBy: user2!.id,
     },
   ];
 

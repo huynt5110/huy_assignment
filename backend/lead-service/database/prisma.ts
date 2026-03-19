@@ -1,4 +1,4 @@
-import { PrismaClient } from '../node_modules/@prisma/client/lead';
+import { PrismaClient } from '@prisma/client/lead';
 import { logger } from '../../lib/logger';
 
 export const prisma = new PrismaClient();

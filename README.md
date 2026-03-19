@@ -1,6 +1,12 @@
 > [!NOTE]
 > For setup and design architecture, please refer to the [HIGH_LEVEL_DESIGN.md](HIGH_LEVEL_DESIGN.md).
 
+## What can be improved
+-  As a simple project, so I decided to use simple token for authentication, but in production, we should use JWT for authentication.
+-  In this project, I use winston logger to log the event, but we should use a centralized logging system such as Datadog, Sentry, Prometheus to monitor the system cache hit, error rate, and other metrics.
+-  I also want to implement Docker Compose for the whole system, but I don't have enough time to do it.
+-  I also want to implement error handling for the system, in case redis or kafka is not available. Basically we should store the data in the database and retry to send it to kafka or redis use worker to enqueue the data to kafka or redis when it is available.
+
 ## ⚙️ Configuration
 
 The system uses a centralized `.env` file located in the `backend/` directory.

@@ -9,6 +9,12 @@ export const activityService = {
     const decodedCursor = cursor ? decodeCursor(cursor) : undefined;
 
     const activities = await prisma.activity.findMany({
+      select: {
+        id: true,
+        leadId: true,
+        type: true,
+        description: true,
+      },
       where: { leadId },
       take: limit + 1,
       skip: decodedCursor ? 1 : 0,
