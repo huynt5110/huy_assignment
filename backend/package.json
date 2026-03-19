@@ -1,0 +1,44 @@
+{
+  "name": "sales-lead-management",
+  "version": "1.0.0",
+  "description": "Sales Lead Management Tool",
+  "scripts": {
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:generate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma generate && cd ../activity-service && npx prisma generate'",
+    "db:migrate": "dotenv -e .env -- sh -c 'cd lead-service && npx prisma migrate dev && cd ../activity-service && npx prisma migrate dev'",
+    "db:seed": "tsx --env-file=.env scripts/seed.ts",
+    "db:prepare": "npm run db:generate && npm run db:migrate && npm run db:seed",
+    "start:gateway": "cd api-gateway && npm install && tsx --env-file=../.env index.ts",
+    "start:lead": "cd lead-service && npm install && tsx --env-file=../.env index.ts",
+    "start:activity": "cd activity-service && npm install && tsx --env-file=../.env index.ts",
+    "start:notification": "cd notification-service && npm install && tsx --env-file=../.env index.ts",
+    "test:e2e": "jest --config tests/jest.config.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.27",
+    "dotenv-cli": "^7.4.2",
+    "prisma": "^5.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2",
+    "@types/socket.io": "^3.0.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "supertest": "^6.3.4",
+    "@types/jest": "^29.5.12",
+    "@types/supertest": "^6.0.2",
+    "path": "^0.12.7",
+    "dotenv": "^17.2.3"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "tsx": "^4.21.0",
+    "ioredis": "^5.3.2",
+    "winston": "^3.12.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.2.0",
+    "zod": "^3.22.4",
+    "socket.io": "^4.8.1",
+    "kafkajs": "^2.2.4"
+  }
+}

@@ -1,4 +1,10 @@
-# Sales Lead Management Tool — High-Level Design
+# High-Level Design: Sales Lead Management System
+
+> [!NOTE]
+> For setup and configuration details, please refer to the [README.md](README.md).
+
+## Configuration Management
+The system utilizes a centralized environment configuration strategy. All microservices and infrastructure components share a lead `.env` file located in the `backend/` directory. This ensures consistency across the distributed stack and simplifies orchestration during both local development and containerized execution.
 
 > A lightweight microservices-based tool for salespeople to manage and track incoming leads from a dealership website.
 
@@ -113,11 +119,10 @@ Frontend → API Gateway → Activity Service → PostgreSQL (persist)
 
 ```
 Frontend → API Gateway → Lead Service (lead data)
-                       → Activity Service (activity log)
-         ← Aggregated response ← API Gateway
+Frontend → API Gateway → Activity Service (activity log)
 ```
 
-A simple synchronous REST call. The API Gateway (acting as BFF) aggregates data from both services and returns a unified response to the frontend.
+The frontend makes separate calls to fetch lead details and the activity log. This allows for independent scaling and pagination of activities.
 
 ---
 
@@ -133,10 +138,9 @@ The API Gateway is the single entry point for all client-facing REST traffic. It
 | **Request Routing** | Maps public endpoints to internal microservice URLs via a route table. |
 | **Rate Limiting** | `express-rate-limit` middleware — limits requests per IP to prevent abuse (e.g., 100 req/min). |
 | **Security Headers** | `helmet` middleware — sets CSP, HSTS, X-Frame-Options, etc. |
-| **Redis Caching** | Caches GET responses in Redis with TTL. Invalidates cache on POST/PUT operations. |
-| **Request Validation** | Validates incoming payloads (JSON schema) before forwarding. |
-| **Response Aggregation** | For the Lead Details view, fetches data from Lead Service + Activity Service and merges into a single response. |
-| **Error Handling** | Centralised error handler returns consistent error response format (`{ status, message, correlationId }`). |
+| **Rate Limiting** | `express-rate-limit` middleware — limits requests per IP (e.g., 100 req/min). |
+| **Redis Caching** | Caches selective GET responses (e.g., Lead Details) in Redis with TTL. |
+| **Request Validation** | Validates incoming payloads (JSON schema/Zod) before forwarding. |
 | **Logging** | Attaches `correlationId` to every request via middleware; logs request/response metadata with Winston. |
 | **CORS** | Configured to allow only the frontend origin. |
 
@@ -144,12 +148,11 @@ The API Gateway is the single entry point for all client-facing REST traffic. It
 
 | Method | Public Endpoint | Target Service | Description |
 |---|---|---|---|
-| `GET` | `/api/leads` | Lead Service | List all leads (paginated) |
-| `GET` | `/api/leads/:id` | Lead Service + Activity Service | Get lead details with activity log |
+| `GET` | `/api/leads` | Lead Service | List all leads (cursor-based pagination) |
+| `GET` | `/api/leads/:id` | Lead Service | Get lead details |
 | `POST` | `/api/leads` | Lead Service | Create a new lead |
-| `PUT` | `/api/leads/:id` | Lead Service | Update lead info |
 | `POST` | `/api/leads/:id/activities` | Activity Service | Log a follow-up activity |
-| `GET` | `/api/leads/:id/activities` | Activity Service | Get activity log for a lead |
+| `GET` | `/api/leads/:id/activities` | Activity Service | Get activity log (paginated) |
 
 ### 4.3 Middleware Pipeline
 
@@ -260,7 +263,7 @@ GET /api/leads/:id
   │
   ├─▶ Check Redis: cache:leads:{id}
   │     ├── HIT  → return cached response (skip microservice call)
-  │     └── MISS → forward to Lead Service + Activity Service
+  │     └── MISS → forward to Lead Service
   │                    │
   │                    ├── Get response
   │                    ├── Store in Redis with TTL

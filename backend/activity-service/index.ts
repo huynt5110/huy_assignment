@@ -1,0 +1,28 @@
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+import app from './app';
+import { logger } from '../lib/logger';
+import { getProducer } from '../lib/kafka';
+import { testDbConnection } from './database/prisma';
+
+const PORT = process.env.ACTIVITY_PORT || 3002;
+
+async function start() {
+  try {
+    await testDbConnection();
+    const producer = await getProducer();
+    app.set('kafkaProducer', producer);
+    logger.info('Kafka Producer initialized and stored in app context');
+
+    app.listen(PORT, () => {
+      logger.info(`Activity Service listening on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start Activity Service', { error });
+    process.exit(1);
+  }
+}
+
+start();
